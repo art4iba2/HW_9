@@ -46,10 +46,14 @@ class Sudent_repository():
             result = session.execute(stmt).scalar()
             return float(result) if result else 0
 
+    def get_students_under_30(self, curse: str):
+        with Session(self.engine) as session:
+            stmt = select(Student).where(Student.curse == curse, Student.score < 30).order_by(Student.score.desc())
+            result = session.execute(stmt).all()
+            return f"{list(result)} \n {len(result)}"
+
 repo = Sudent_repository()
 repo.load_from_csv("students.csv")
 
-print(repo.get_all_students())
-print(repo.get_students_by_faculty("РЭФ"))
-print(repo.get_unique_curse("Информатика"))
-print(repo.get_avg_score("ФТФ"))
+
+print(repo.get_students_under_30("Информатика"))
