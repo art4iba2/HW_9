@@ -1,6 +1,8 @@
 import csv
 from sqlalchemy import create_engine, select, func
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session
+from sqlalchemy.testing.provision import drop_db
+
 from model import Student, Base
 
 class Sudent_repository():
@@ -36,9 +38,10 @@ class Sudent_repository():
         with Session(self.engine) as session:
             return session.query(Student).filter(Student.faculty == faculty).all()
 
-    def get_unique_curse(self, curse: str):
+    def get_unique_curse(self):
         with Session(self.engine) as session:
-            return session.query(Student).filter(Student.curse == curse).all()
+            stmt = select(Student.curse).distinct()
+            return [row for row, in session.execute(stmt)]
 
     def get_avg_score(self, faculty_name: str):
         with Session(self.engine) as session:
@@ -52,8 +55,13 @@ class Sudent_repository():
             result = session.execute(stmt).all()
             return f"{list(result)} \n {len(result)}"
 
+    def drop_db(self):
+        Base.metadata.drop_all(bind=self.engine)
+
+
 repo = Sudent_repository()
 repo.load_from_csv("students.csv")
 
 
+print(repo.get_unique_curse())
 print(repo.get_students_under_30("Информатика"))
