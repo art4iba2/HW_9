@@ -19,6 +19,10 @@ class Sudent_repository():
         with Session(self.engine) as session:
             return session.query(Student).all()
 
+    def get_student(self, student_id: int):
+        with Session(self.engine) as session:
+            return session.get(Student, student_id)
+
     #UPDATE
     def update_student(self, student_id: int, **kwargs):
         with Session(self.engine) as session:

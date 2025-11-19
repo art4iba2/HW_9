@@ -22,5 +22,6 @@ class StudentDelete(BaseModel):
     curse: str
     score: float
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }
