@@ -1,23 +1,46 @@
 import csv
 from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import Session
-from sqlalchemy.testing.provision import drop_db
-
 from model import Student, Base
 
 class Sudent_repository():
     def __init__(self, db_url="sqlite:///student.db"):
-        self.engine = create_engine(db_url)
+        self.engine = create_engine(db_url, echo=True)
         Base.metadata.create_all(self.engine)
 
+    #CREATE
     def add_student(self, student: Student):
         with Session(self.engine) as session:
             session.add(student)
             session.commit()
 
+    #READ
     def get_all_students(self):
         with Session(self.engine) as session:
             return session.query(Student).all()
+
+    #UPDATE
+    def update_student(self, student_id: int, **kwargs):
+        with Session(self.engine) as session:
+            student = session.get(Student, student_id)
+            if not student:
+                return None
+            for key, value in kwargs.items():
+                setattr(student, key, value)
+            session.commit()
+            return student
+
+    #DELETE
+    def delete_student(self, student_id: int):
+        with Session(self.engine) as session:
+            student = session.get(Student, student_id)
+            if not student:
+                return False
+            session.delete(student)
+            session.commit()
+            return True
+
+
 
     def load_from_csv(self, file_patch: str):
         with Session(self.engine) as session:

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Integer, Column, String, DateTime, ForeignKey
+from sqlalchemy import Integer, Column, String, Float, ForeignKey
 Base = declarative_base()
 
 class Student(Base):
@@ -10,7 +10,7 @@ class Student(Base):
     surname = Column(String)
     faculty = Column(String)
     curse = Column(String)
-    score = Column(Integer)
+    score = Column(Float)
 
     def __repr__(self):
         return (f"<student({self.id} name = {self.name} surname = {self.surname} "
